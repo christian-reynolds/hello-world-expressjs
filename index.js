@@ -1,18 +1,23 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var upload = multer();
 var app = express();
 
 //Set Pug as the templating engine for the app
 app.set('view engine', 'pug');
 app.set('views','./views');
 
-//Used to parse the body of requests which have payloads attached to them
-var bodyParser = require('body-parser');
+// for parsing application/json
+app.use(bodyParser.json()); 
 
-//To parse URL encoded data
-app.use(bodyParser.urlencoded({ extended: false }))
+// for parsing application/xwww-
+app.use(bodyParser.urlencoded({ extended: true })); 
+//form-urlencoded
 
-//To parse json data
-app.use(bodyParser.json())
+// for parsing multipart/form-data
+app.use(upload.array()); 
+app.use(express.static('public'));
 
 //Parses Cookie header and populate req.cookies with an object keyed by cookie names
 var cookieParser = require('cookie-parser');
@@ -34,6 +39,15 @@ app.use(express.static('public'));
 
 
 //Routes below
+app.get('/', function(req, res){
+   res.render('form');
+});
+
+app.post('/', function(req, res){
+   console.log(req.body);
+   res.send("recieved your request!");
+});
+
 app.get('/first_template', function(req, res){
    res.render('first_view');
 });
